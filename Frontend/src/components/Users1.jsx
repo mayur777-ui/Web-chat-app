@@ -3,6 +3,7 @@ import defaultImg from "../images/default.jpg";
 import { UserRoundPlus, LogOut, Search } from "lucide-react";
 import {useNavigate,useParams,Link } from "react-router-dom";
 import axios from 'axios';
+import '../styles/User1.css';
 export default function Users1() {
   const USER_API_END_POINT = 'http://localhost:5000/user';
   let token = localStorage.getItem('token');
@@ -68,12 +69,14 @@ export default function Users1() {
         message:'',
       })
       setadduser(!adduser);
-    }catch(err){
-      console.log(err);
+    }catch(e){
+      if(e.response && e.response.status === 400){
+        alert('user already in your connections');
+      }
     }
   }
   return (
-    <div className="w-full md:w-[40%] border-r border-r-zinc-900 flex items-center h-screen">
+    <div className="connection-main w-full md:w-[40%] flex items-center h-screen">
       <div className="userdetails p-5 w-[20%] h-full bg-slate-800">
         <ul className="h-full flex flex-col justify-start items-center gap-5">
           <li className="flex items-center gap-5 relative">

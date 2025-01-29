@@ -102,8 +102,8 @@ export const getUser = async (req, res) => {
 export const beingConnect = async (req, res) => {
   try {
     const connectionSendid = req.user.id;
-    const {email} = req.body;
-    console.log(email);
+    const {email, message} = req.body;
+    // console.log(email,message);
     const SendUser = await USER.findById(connectionSendid);
     const RecevierUser = await USER.findOne({email}); //=>if you use find only it will return array of user
     if (!SendUser) {
@@ -117,13 +117,13 @@ export const beingConnect = async (req, res) => {
         message: "Reciver user is not present",
       });
     }
-     const connectionGetid = RecevierUser._id;
-    if(SendUser.connections.find(connectionGetid)){
+    const connectionGetid = RecevierUser._id;
+    let u = SendUser.connections.includes(connectionGetid);
+    if(u){
       return res.status(400).json({
-        message:"user already exist"
-      })
+          message: "User already exists"
+      });
     }
-
     SendUser.connections.push(connectionGetid);
     RecevierUser.connections.push(connectionSendid);
     await SendUser.save();
@@ -132,7 +132,7 @@ export const beingConnect = async (req, res) => {
       message: "User is in your connection",
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(500).json({
       message: "Internal server error",
     });
