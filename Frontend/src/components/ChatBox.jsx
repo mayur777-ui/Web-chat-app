@@ -4,7 +4,8 @@ import { Send } from 'lucide-react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
-
+import useSound from 'use-sound';
+// import sound from '/public/sound.mp3';
 export default function ChatBox() {
   let { connectionId } = useParams();
   let { id } = useParams();
@@ -16,7 +17,7 @@ export default function ChatBox() {
   const messagesEndRef = useRef(null);
   const USER_API_END_POINT = 'http://localhost:5000/message';
   let socket;
-
+  const [playSound] = useSound("/sound.mp3",{volume:1});//it will for play sound
   // Scroll to the bottom of the chat when a new message arrives
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -39,6 +40,7 @@ export default function ChatBox() {
 
     socket.on('newMessage', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
+      playSound();
     });
 
     return () => {
@@ -121,7 +123,7 @@ export default function ChatBox() {
   };
 
   return (
-    <div className="flex flex-col w-full h-screen bg-gray-100">
+    <div className="flex flex-col w-full h-screen justify-between bg-gray-100">
       {/* Header Section */}
       <div className="flex items-center p-4 bg-white shadow-md rounded-b-lg">
         <img src={defaultpic} className="w-12 h-12 rounded-full border-2 border-gray-200" alt="Connection" />
@@ -129,7 +131,7 @@ export default function ChatBox() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex flex-col-reverse w-full h-full overflow-auto p-4">
+      <div className="chat-area flex flex-col-reverse w-full h-full overflow-auto p-4">
         <div className="flex flex-col space-y-4">
           {messages.map((message, i) => (
             <div key={i} className={`flex ${message.sender === id ? 'justify-end' : 'justify-start'}`}>
@@ -138,7 +140,7 @@ export default function ChatBox() {
               </div>
             </div>
           ))}
-          <div ref={messagesEndRef} />
+          <div className='refr' ref={messagesEndRef} />
         </div>
       </div>
 
