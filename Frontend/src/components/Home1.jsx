@@ -1,12 +1,59 @@
-import React from 'react'
+import React, {useState,useEffect} from 'react'
 import Users1 from './Users1'
-import { Outlet } from 'react-router-dom'
+import { useLocation, Link, Outlet } from 'react-router-dom';
+
+
 export default function Home1() {
+    const location = useLocation();
+  const isChatRoute = location.pathname.includes('/connection/');
+const [deviceType, setDeviceType] = useState('desktop');
+
+useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth <= 768) {
+      setDeviceType('mobile');
+    } else {
+      setDeviceType('desktop');
+    }
+  };
+
+  window.addEventListener('resize', handleResize);
+  
+  // Call once to set the initial state
+  handleResize();
+
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+}, []);
   return (
-    <div className='flex bg-white'>
+    <>
+    {
+      deviceType === 'desktop'?(
+        <div className='flex bg-white'>
       <Users1 />
       <Outlet />
     </div>
+      ):(
+        <div className="flex flex-col md:flex-row h-screen">
+        {/* Mobile View: Show Users List and ChatBox (on click) */}
+        <div className="block md:hidden w-full h-full">
+          {!isChatRoute ? <Users1 /> : <Outlet />}
+        </div>
+  
+        {/* Desktop View: Show Users List and ChatBox side by side */}
+        <div className="hidden md:flex w-full h-full">
+          <div className="w-1/3 p-4">
+            <Users1 />
+          </div>
+          <div className="w-2/3 p-4">
+            <Outlet />
+          </div>
+        </div>
+      </div>
+      )
+    }
+    </>
   )
 }
 

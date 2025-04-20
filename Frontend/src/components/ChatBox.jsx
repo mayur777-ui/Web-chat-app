@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import defaultpic from '../images/default.jpg';
 import { Send } from 'lucide-react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import useSound from 'use-sound';
 // import sound from '/public/sound.mp3';
 export default function ChatBox() {
-  let { connectionId } = useParams();
-  let { id } = useParams();
+  let navigate = useNavigate();
+  let { connectionId, id } = useParams();
   const [logUser, setLogUser] = useState({});
   const token = localStorage.getItem('token');
   const [reciverDetails, setReciverDetails] = useState({});
@@ -16,7 +16,7 @@ export default function ChatBox() {
   const [currentMessage, setCurrentMessage] = useState('');
   const messagesEndRef = useRef(null);
   const USER_API_END_POINT = 'http://localhost:5000/message';
-  let socket;
+
   const [playSound] = useSound("/sound.mp3",{volume:1});//it will for play sound
   // Scroll to the bottom of the chat when a new message arrives
   useEffect(() => {
@@ -24,29 +24,27 @@ export default function ChatBox() {
   }, [messages]);
 
   // Socket connection setup
-  useEffect(() => {
-    socket = io('http://localhost:5000', {
-      withCredentials: true,
-      query: {
-        userId: logUser._id,
-      },
-    });
+  const socketRef = useRef(null);
 
-    socket.emit('userConnected', logUser);
+useEffect(() => {
+ 
+  socketRef.current = io('http://localhost:5000', {
+    withCredentials: true,
+    query: { userId: logUser._id },
+  });
 
-    socket.on('connected', (message) => {
-      // console.log(message);
-    });
+  socketRef.current.emit('userConnected', logUser);
 
-    socket.on('newMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-      playSound();
-    });
+  socketRef.current.on('newMessage', (message) => {
+    setMessages((prev) => [...prev, message]);
+    playSound();
+  });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [logUser]);
+  
+  return () => {
+    socketRef.current.disconnect(); 
+  };
+}, [logUser._id]); 
 
   // Fetch user details
   useEffect(() => {
@@ -77,28 +75,25 @@ export default function ChatBox() {
   // Handle sending message
   const handleSendMessage = async () => {
     if (currentMessage.trim() === '') return;
-
+  
+    const newMessage = { content: currentMessage, sender: logUser._id };
+  
+    setMessages((prev) => [...prev, newMessage]); // Immediately add to messages
+  
     try {
-      // Send the message via API
       let response = await axios.post(
         `${USER_API_END_POINT}/send/${connectionId}`,
         { content: currentMessage },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      // // Emit the message to the server using socket
-      // socket.emit('sendMessage', {
-      //   sender: logUser._id,
-      //   receiver: connectionId,
-      //   content: currentMessage,
-      // });
-
-      setMessages((prev) => [...prev, response.data.newMessage]);
-      setCurrentMessage('');
+      
+      // Optionally update the message with any additional info from the response
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
-  };
+  
+    setCurrentMessage('');
+  };  
 
   // Fetch messages on load
   useEffect(() => {
@@ -122,20 +117,48 @@ export default function ChatBox() {
     }
   };
 
+  const [deviceType, setDeviceType] = useState('desktop');
+  
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setDeviceType('mobile');
+      } else {
+        setDeviceType('desktop');
+      }
+    };
+  
+    window.addEventListener('resize', handleResize);
+    
+    // Call once to set the initial state
+    handleResize();
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  let handleBack = () => {
+    navigate(-1);
+  }
   return (
     <div className="flex flex-col w-full h-screen justify-between bg-gray-100">
       {/* Header Section */}
       <div className="flex items-center p-4 bg-white shadow-md rounded-b-lg">
         <img src={defaultpic} className="w-12 h-12 rounded-full border-2 border-gray-200" alt="Connection" />
         <h1 className="ml-4 text-xl font-semibold text-gray-800">{reciverDetails.name}</h1>
+        {deviceType === 'mobile' && (
+          <div>
+          <h2 onClick={handleBack} className='absolute right-3 top-2 p-3 rounded-md text-zinc-900 bg-gray-300'>Back</h2>
+        </div>
+        )}
       </div>
 
       {/* Chat Area */}
       <div className="chat-area flex flex-col-reverse w-full h-full overflow-auto p-4">
         <div className="flex flex-col space-y-4">
           {messages.map((message, i) => (
-            <div key={i} className={`flex ${message.sender === id ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs p-3 rounded-lg ${message.sender === 'You' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
+            <div key={i} className={`flex ${message.sender?.toString() === logUser._id?.toString() ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-xs p-3 rounded-lg ${message.sender?.toString() === logUser._id?.toString()  ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
                 {message.content}
               </div>
             </div>
