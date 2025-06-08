@@ -22,7 +22,13 @@ const userSchema = new Schema({
     connections:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'USER'
-    }]
+    }],
+    otp:{
+        otpnum:{
+            type:String,
+        },
+        expiry: Date
+    }
 },
 {timestamps:true}
 );

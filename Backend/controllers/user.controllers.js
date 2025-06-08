@@ -1,7 +1,7 @@
 import USER from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
+import { transporter } from "../utils/email.js";
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   // console.log(req.body);
@@ -64,6 +64,7 @@ export const login = async (req, res) => {
         msg: "Invalid Password",
       });
     }
+
     const token = jwt.sign({ id: existing._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -161,3 +162,150 @@ export const getAllconnections = async (req, res) => {
     });
   }
 };
+
+
+
+export const forgotPassword = async( req, res) => {
+  try{
+//     console.log("Email user:", process.env.Google_EMAIL);
+// console.log("Email pass:", process.env.Google_EMAIL_PASS);
+    const {email} = req.body;
+    // console.log(email);
+    if(!email){
+      return res.status(400).json({
+        message: "Please fill all the fields",
+      });
+    }
+    const user = await USER.findOne({email});
+    if(!user){
+      // console.log("User does not exist");
+      return res.status(404).json({
+        message: "User does not exist",
+      });
+    }
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    user.otp = {
+      otpnum :otp,
+      expiry :new Date(Date.now() + 10 * 60 * 1000)
+    }
+    await user.save();
+    // res.status(200);
+    await transporter.sendMail({
+      from: process.env.Google_email,
+      to: email,
+      subject: "Password Reset OTP",
+      html: `<div style="
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  background: #f9fafb; 
+  padding: 20px; 
+  border-radius: 12px; 
+  max-width: 400px; 
+  margin: auto; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #333;
+">
+  <h2 style="color: #4f46e5; margin-bottom: 10px;">Password Reset OTP</h2>
+  <p style="font-size: 16px; line-height: 1.5;">
+    Your OTP for password reset is 
+    <span style="
+      display: inline-block;
+      background: #4f46e5;
+      color: white;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 18px;
+      border-radius: 8px;
+      letter-spacing: 2px;
+      user-select: all;
+      ">
+      ${otp}
+    </span>
+  </p>
+  <p style="font-size: 14px; color: #6b7280; margin-top: 12px;">
+    This OTP is valid for 10 minutes. Please do not share it with anyone.
+  </p>
+</div>
+`,
+    }).then(() => {
+      res.status(200).json({
+        message: "OTP sent to your email",
+      });
+    }).catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        message: "Failed to send OTP",
+      });   
+    })
+  }catch(err){
+    console.log(err);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
+
+
+export const verifyOtp = async(req,res)=>{
+  try{
+    const {email, otp} = req.body;
+    console.log("Email:", email);
+    console.log(otp);
+    if(!email || !otp){
+      return res.status(400).json({
+        message: "Please fill all the fields",
+      });
+    }
+    const user  = await USER.findOne({email});
+    if(!user){
+      return res.status(404).json({
+        message: "User does not exist",
+      });
+    }
+    if(!user.otp || user.otp.otpnum !== otp || user.otp.expiry < new Date()){
+      return res.status(400).json({
+        message: "Invalid or expired OTP",
+      });
+    }
+    res.status(200).json({
+      message: "OTP verified successfully",
+      userId: user._id,
+    });
+  }catch(err){
+    console.log(err);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
+
+
+
+export const resetPassword = async(req,res)=>{
+  try{
+    let {userId, newPassword} = req.body;
+    if(!userId || !newPassword){
+      return res.status(400).json({
+        message: "Please fill all the fields",
+      });
+    }
+    const user = await USER.findById(userId);
+    if(!user){
+      return res.status(404).json({
+        message: "User does not exist",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    user.password = hashedPassword;
+    user.otp = null; // Clear the OTP after successful password reset
+    await user.save();
+    res.status(200).json({
+      message: "Password reset successfully",
+    });
+
+  }catch(err){
+    console.log(err);
+    res.status(500).json({
+      message: "Internal server error",
+    })
+  }
+}

@@ -9,6 +9,11 @@ import SecureRoute from './components/SecureRoute';
 import Landing from './components/Landing';
 import ChatBox from './components/ChatBox';
 import EmptyChat from './components/EmptyChat';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import OTP from './components/OTP.JSX';
+import ResetPassword from './components/ResetPassword';
+
+const clientID = "364301647683-pjarv54flf93in9c7hd25e4qlqugd982.apps.googleusercontent.com";
 let Routeapp = createBrowserRouter([
   {
     path: '/',
@@ -16,7 +21,11 @@ let Routeapp = createBrowserRouter([
   },
   {
     path:'/login',
-    element:<Login />
+   element:(
+      <GoogleOAuthProvider clientId={clientID}>
+       <Login/>
+       </GoogleOAuthProvider>
+    )
   },
   {
     path:'/register',
@@ -37,9 +46,17 @@ let Routeapp = createBrowserRouter([
       {
         path:'connection/:connectionId',
         element:<ChatBox />
-    }
+    },
     ]
   },
+  {
+    path:'/otp',
+    element: <OTP />
+  },
+  {
+    path:'/resetPassword',
+    element: <ResetPassword />
+  }
 ]);
 
 function App() {

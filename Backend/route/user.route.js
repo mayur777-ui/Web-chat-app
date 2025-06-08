@@ -1,5 +1,6 @@
-import { register,login, getUser,beingConnect, getAllconnections} from "../controllers/user.controllers.js";
+import { register,login, getUser,beingConnect, getAllconnections, forgotPassword, verifyOtp, resetPassword} from "../controllers/user.controllers.js";
 import { Router } from "express";
+import { loginwithgoogel } from "../utils/googleAuth.js";
 import auth from "../middleware/auth.js";
 const router = Router({
     mergeParams:true,
@@ -11,4 +12,9 @@ router.post("/login",login);
 router.post("/beginconnect/:id", auth, beingConnect);
 router.get("/connect/:id",auth,getAllconnections);
 router.get("/getDetails/:id",auth,getUser);
+router.post("/googellogin",loginwithgoogel);
+router.post("/forgotpassword", forgotPassword);
+router.post("/verifyOtp",verifyOtp);
+router.post("/resetPassword",resetPassword);
+
 export default router;

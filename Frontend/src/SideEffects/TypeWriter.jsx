@@ -11,7 +11,7 @@ export default function TypewriterEffect({text}){
             }}
             onInit={(typewriter) => {
                 typewriter
-                .typeString("Welcome to <span style='color: #ff6347; font-weight: bold; font-size: 1.5em;'>WebChat</span>")
+                .typeString("Welcome to <span style='color: #ff6347; font-weight: bold; font-size: 1.0em;'>WebChat</span>")
                     .pauseFor(1800)
                     .deleteAll()
                     // .callFunction(() => {

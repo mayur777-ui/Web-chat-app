@@ -62,7 +62,7 @@ export const getMessage = async (req, res) => {
       messages: conversation.messages,
       details: {
         name: recivUser.name,
-        email: recivUser.email
+        email: recivUser.email,
       }
     });
   } catch (error) {
