@@ -29,10 +29,14 @@ export default function Home1() {
     <>
       {deviceType === 'desktop' ? (
         <div className="flex bg-neutral-100 dark:bg-neutral-900/70 backdrop-blur-lg min-h-screen">
-          <Users1 />
-          <AnimatePresence>
+          <div className='w-1/4'>
+            <Users1 />
+          </div>
+          <div className='w-3/4'>
+            <AnimatePresence>
             <Outlet />
           </AnimatePresence>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col md:flex-row h-screen bg-neutral-100 dark:bg-neutral-900/70 backdrop-blur-lg">

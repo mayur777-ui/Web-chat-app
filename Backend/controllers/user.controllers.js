@@ -2,6 +2,8 @@ import USER from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { transporter } from "../utils/email.js";
+import { createNotification } from "./notification.controllers.js";
+import { NOTIFICATION_TYPES } from "../utils/notification.types.js";
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   // console.log(req.body);
@@ -22,6 +24,7 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
     await newUser.save();
+    createNotification(newUser._id, NOTIFICATION_TYPES.First_time);
     const token = jwt.sign(
       {
         id: newUser._id,
@@ -248,8 +251,7 @@ export const forgotPassword = async( req, res) => {
 export const verifyOtp = async(req,res)=>{
   try{
     const {email, otp} = req.body;
-    console.log("Email:", email);
-    console.log(otp);
+
     if(!email || !otp){
       return res.status(400).json({
         message: "Please fill all the fields",
@@ -298,6 +300,7 @@ export const resetPassword = async(req,res)=>{
     user.password = hashedPassword;
     user.otp = null; // Clear the OTP after successful password reset
     await user.save();
+    createNotification(user._id, NOTIFICATION_TYPES.Password_reset);
     res.status(200).json({
       message: "Password reset successfully",
     });

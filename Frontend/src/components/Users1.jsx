@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import defaultImg from '../images/default.jpg';
-import { UserRoundPlus, LogOut, Search, Sun, Moon, Menu, X } from 'lucide-react';
+import { UserRoundPlus, LogOut, Search, Sun, Moon, Menu, X,Bell } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useTheme } from '../hooks/ThemHook';
 import { motion } from 'framer-motion';
 
+
 export default function Users1() {
   const USER_API_END_POINT = 'http://localhost:5000/user';
+  const Notification_API_END_POINT = 'http://localhost:5000/notification';
   const token = localStorage.getItem('token');
   const [loggedInUser, setLoggedInUser] = useState({});
   const [connectionList, setConnectionList] = useState([]);
@@ -21,17 +23,36 @@ export default function Users1() {
   const [addUser, setAddUser] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showNotification, setShowNotification] = useState(() => {
+  const storedValue = localStorage.getItem('showNotification');
+  if (storedValue !== null) {
+    return storedValue === 'true'; // Convert string to boolean
+  } else {
+    localStorage.setItem('showNotification', 'false'); // default to false
+    return false;
+  }
+});
+
+  const [notifications, setNotifications] = useState([]);
   const menuRef = useRef(null);
+  const [count, setCount] = useState(0);
+
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('showNotification');
     navigate('/login');
   };
 
   const showAdd = () => setAddUser(!addUser);
   const showProfileToggle = () => setShowProfile(!showProfile);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
+  const showNotif = () => {
+    const newValue = !showNotification;
+  setShowNotification(newValue);
+  localStorage.setItem('showNotification', newValue.toString());
+  }
   // Handle outside click to close menu
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -100,6 +121,58 @@ export default function Users1() {
     }
   };
 
+
+
+  // get all notifications
+  useEffect(()=>{
+    let fetchNotifications = async () => {
+      try{
+        let res = await axios.get(`${Notification_API_END_POINT}/Allnotifications`,{
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        // console.log(res.data.data);
+        setNotifications(res.data.data || []);
+      }catch(err){
+        console.error('Error fetching notifications:', err);
+      }
+    }
+    fetchNotifications();
+  },[]);
+
+  // Mark notification as read
+  const markAsRead = async(notificationId) => {
+    console.log(notificationId)
+    try {
+      let res = await axios.patch(`${Notification_API_END_POINT}/markAsRead/${notificationId}`,{},{
+        headers: { Authorization: `Bearer ${token}` },
+      });
+     setNotifications((prev) =>
+  prev.map((n) =>
+    n._id === notificationId ? { ...n, status: 'read' } : n
+  )
+);
+
+    }catch(err) {
+      console.error('Error marking notification as read:', err);
+    }
+  }
+
+
+  useEffect(() => {
+    const fetchUnreadCound = async() =>{
+      try{
+    const res = await axios.get(`${Notification_API_END_POINT}/unreadCount`,{
+     headers: { Authorization: `Bearer ${token}` },
+    });
+    // console.log('Unread notifications count:', res.data.count);
+    setCount(res.data.count);
+  }catch(err){
+    console.log('Error fetching unread notifications count:', err);
+  }
+    }
+    fetchUnreadCound();
+
+  })
   return (
     <div className="flex flex-col min-h-screen bg-neutral-100 dark:bg-neutral-900 transition-all duration-300 font-sans">
       {/* Mobile Header */}
@@ -114,7 +187,9 @@ export default function Users1() {
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </motion.button>
-          <div className="flex-1 ml-3 flex items-center gap-2 bg-neutral-50/70 dark:bg-neutral-800/70 backdrop-blur-lg border border-neutral-200/50 rounded-lg px-3 py-2 shadow-sm">
+          {
+            !showNotification && (
+              <div className="flex-1 ml-3 flex items-center gap-2 bg-neutral-50/70 dark:bg-neutral-800/70 backdrop-blur-lg border border-neutral-200/50 rounded-lg px-3 py-2 shadow-sm">
             <input
               type="text"
               placeholder="Search connections..."
@@ -125,6 +200,8 @@ export default function Users1() {
             />
             <Search className="text-neutral-500 dark:text-neutral-400 hover:text-primary-500 transition-all" size={20} />
           </div>
+            )
+          }
         </div>
       </div>
 
@@ -428,11 +505,71 @@ export default function Users1() {
               Logout
             </motion.div>
           </li>
+          <li className="relative group">
+  <motion.div whileHover={{ scale: 1.1 }} className="relative">
+    <Bell
+      className="cursor-pointer text-text-primary dark:text-text-primaryDark hover:text-zinc-900 transition-all"
+      size={28}
+      aria-label="notification"
+      onClick={showNotif}
+    />
+    {count > 0 && (
+      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
+        {count}
+      </span>
+    )}
+  </motion.div>
+
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    className="absolute left-24 top-0 hidden group-hover:flex bg-neutral-800/90 text-white text-sm px-2 py-1 rounded-md shadow-lg z-40"
+  >
+    notification
+  </motion.div>
+</li>
+
         </ul>
       </div>
 
-      {/* Connection List */}
+            {
+              showNotification ? (
+              <div className='flex-1 mt-16 md:mt-0 md:ml-20 overflow-auto bg-neutral-100 dark:bg-neutral-900'>
+                  {
+                  notifications?.length > 0 ? (
+                    <div className='p-3'>
+                      <h1 className='text-2xl font-bold text-center mb-4 text-text-primary dark:text-text-primaryDark'>
+                        🔔 Notifications
+                      </h1>
+                      <ul>
+                        {
+                        notifications.map((notification, index) => (
+                      <li key={index} className="mb-3">
+                        <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg shadow-md mb-4">
+                        <h3 className="text-md  text-text-primary dark:text-text-primaryDark">{notification.text}</h3>
+                        {
+                          notification.status === 'unread' && (
+                            <button onClick={() => markAsRead(notification._id)}>
+                          Mark as Read
+                        </button>
+                          )
+                        }
+                      </div>
+                      </li>
+                    )
+                  )
+                      }
+                      </ul>
+                    </div>
+                  ):(
+                    <h2>no notification</h2>
+                    
+                )
+                }
+              </div>
+              ) : (
       <div className="flex-1 mt-16 md:mt-0 md:ml-20 overflow-auto bg-neutral-100 dark:bg-neutral-900">
+        {/* Search connections */}
         <div className="p-4">
           <div className="hidden md:flex items-center gap-2 bg-neutral-50/70 dark:bg-neutral-800/70 backdrop-blur-lg border border-neutral-200/50 rounded-lg px-3 py-2 shadow-sm mb-4 max-w-md">
             <input
@@ -445,7 +582,9 @@ export default function Users1() {
             />
             <Search className="text-neutral-500 dark:text-neutral-400 hover:text-primary-500 transition-all" size={20} />
           </div>
-          {isLoading ? (
+          
+      {/* Connection List */}
+          {isLoading  ? (
             <div className="text-center text-text-primary dark:text-text-primaryDark py-10">Loading...</div>
           ) : filteredConnections.length === 0 ? (
             <div className="text-center text-text-primary dark:text-text-primaryDark py-10">No connections found.</div>
@@ -475,6 +614,8 @@ export default function Users1() {
           )}
         </div>
       </div>
+              )
+            }
     </div>
   );
 }
