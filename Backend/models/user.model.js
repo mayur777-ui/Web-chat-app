@@ -20,8 +20,23 @@ const userSchema = new Schema({
         default:"",
     },
     connections:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'USER'
+          user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'USER',
+      required: true
+    },
+        status:{
+            type:String,
+            enum:['pending','accepted', 'rejected'],
+            default: 'pending',
+        },
+         requestedAt: {
+                type: Date,
+                default: Date.now
+            },
+            updatedAt: {
+                type: Date,
+            }
     }],
     otp:{
         otpnum:{

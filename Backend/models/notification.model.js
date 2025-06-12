@@ -16,9 +16,9 @@ const notificationSchema  = new Schema({
         enum:[
             'FirstTime',
             'PasswordReset',
+            'ConnectionRequest',
             'ConnectionAccepted',
             'ConnectionRejected',
-            'ConnectionRemoved',
             'NewMessage',
         ]
     },

@@ -89,17 +89,19 @@ export const login = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await USER.findById(id).populate('connections');
-    // console.log(user);
+    const user = await USER.findById(id).populate('connections.user');
+    // console.log("User ID:", user);
+    const onlyAcceptedConnections = user.connections.filter((connection) => connection.status === 'accepted');
+    console.log("accept only ", onlyAcceptedConnections);
     if (!user) {
       return res.status(404).json({
         msg: "User not found",
       });
     }
-    res.send({user:user});
+    res.send({user, userFriend: onlyAcceptedConnections});
   } catch (err) {
     res.status(500).json({ msg: err });
-    // console.log(err.message);
+    console.log(err.message);
   }
 };
 
@@ -107,7 +109,6 @@ export const beingConnect = async (req, res) => {
   try {
     const connectionSendid = req.user.id;
     const {email, message} = req.body;
-    // console.log(email,message);
     const SendUser = await USER.findById(connectionSendid);
     const RecevierUser = await USER.findOne({email}); //=>if you use find only it will return array of user
     if (!SendUser) {
@@ -122,16 +123,32 @@ export const beingConnect = async (req, res) => {
       });
     }
     const connectionGetid = RecevierUser._id;
-    let u = SendUser.connections.includes(connectionGetid);
+    SendUser.connections.forEach((conn, index) => {
+  console.log(`Connection[${index}]:`, conn);
+});
+    let u = SendUser.connections.some(connection => connection.user.toString() === connectionGetid.toString());
     if(u){
+      
       return res.status(400).json({
           message: "User already exists"
       });
     }
-    SendUser.connections.push(connectionGetid);
-    RecevierUser.connections.push(connectionSendid);
+    if(connectionSendid.toString() === connectionGetid.toString()){
+      return res.status(400).json({message: "You cannot connect with yourself"});
+    }
+
+
+    SendUser.connections.push({
+      user:connectionGetid,
+      status: 'pending',
+    })
+    RecevierUser.connections.push({
+      user: connectionSendid,
+      status: 'pending',
+    })
     await SendUser.save();
     await RecevierUser.save();
+    createNotification(connectionGetid, NOTIFICATION_TYPES.Connection_request,connectionSendid);
     res.status(201).json({
       message: "User is in your connection",
     });
@@ -143,28 +160,84 @@ export const beingConnect = async (req, res) => {
   }
 };
 
-export const getAllconnections = async (req, res) => {
-  try {
-    const id = req.user.id;
-    const user = await USER.findById(id).populate('connections');
-    if (!user) {
+
+export const acceptConnection = async(req,res)=>{
+  try{
+    const {senderID} = req.body;
+    console.log("Sender ID:", senderID);
+    const receiverID = req.user.id;
+    const senderUser = await USER.findById(senderID);
+    const receiverUser = await USER.findById(receiverID);
+    console.log(senderUser);
+    console.log(receiverUser)
+    if(!senderUser){
       return res.status(404).json({
-        message: "User does not exist",
+        message: "Sender User does not exist",
       });
     }
-    const allConnections = user.connections;
-    res.status(201).json({
-      user,
-      allConnections,
+    if(!receiverUser){
+      return res.status(404).json({
+        message: "Receiver user does not exist",
+      });
+    }
+    const receiverConnection = receiverUser.connections.find(
+      conn => conn.user.toString() === senderID && conn.status === "pending"
+    );
+    const senderConnection = senderUser.connections.find(
+      conn => conn.user.toString() === receiverID && conn.status === "pending"
+    );
+    if (!receiverConnection) {
+      return res.status(400).json({
+        message: "receiver has no pending record for this connection",
+      });
+    }
+    if (!senderConnection) {
+      return res.status(400).json({
+        message: "Sender has no pending record for this connection",
+      });
+    }
+
+    receiverConnection.status = "accepted";
+    senderConnection.status = "accepted";
+
+    await receiverUser.save();
+    await senderUser.save();
+
+     res.status(200).json({
+      message: "Connection request accepted",
     });
-    // console.log(user);
-  } catch (error) {
-    console.log(error.message);
-    res.send({
+
+  }catch(err){
+    console.log(err.message);
+    res.status(500).json({
       message: "Internal server error",
     });
   }
-};
+}
+// export const getAllconnections = async (req, res) => {
+//   try {
+//     const id = req.user.id;
+//     console.log("User id:", id);
+//     const user = await USER.findById(id).populate('connections');
+//     console.log(user);
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "User does not exist",
+//       });
+//     }
+//     const allConnections = user.connections;
+//     res.status(201).json({
+//       user,
+//       allConnections,
+//     });
+//     // console.log(user);
+//   } catch (error) {
+//     console.log(error.message);
+//     res.send({
+//       message: "Internal server error",
+//     });
+//   }
+// };
 
 
 

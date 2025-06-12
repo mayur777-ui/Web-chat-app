@@ -5,6 +5,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useTheme } from '../hooks/ThemHook';
 import { motion } from 'framer-motion';
+// import { acceptConnection } from '../../../Backend/controllers/user.controllers';
 
 
 export default function Users1() {
@@ -72,8 +73,12 @@ export default function Users1() {
         const response = await axios.get(`${USER_API_END_POINT}/getDetails/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        // console.log('User data:', response.data.user);
         setLoggedInUser(response.data.user);
-        setConnectionList(response.data.user.connections || []);
+        // console.log('User connections:', response.data.user.connections);
+        
+        setConnectionList(response.data.userFriend|| []);
+    
         setFilteredConnections(response.data.user.connections || []);
       } catch (err) {
         console.error('Error:', err.response?.data || err.message);
@@ -130,7 +135,8 @@ export default function Users1() {
         let res = await axios.get(`${Notification_API_END_POINT}/Allnotifications`,{
           headers: { Authorization: `Bearer ${token}` },
         });
-        // console.log(res.data.data);
+        // res.data.data.map((notification) =>
+        // console.log(notification.Type));
         setNotifications(res.data.data || []);
       }catch(err){
         console.error('Error fetching notifications:', err);
@@ -173,6 +179,22 @@ export default function Users1() {
     fetchUnreadCound();
 
   })
+
+  // Accept connection request 
+  const acceptRequest = async (senderID,notificatoinId) => {
+    markAsRead(notificatoinId);
+    console.log('Accepting connection request from:', senderID);
+    setIsLoading(true);
+    try{
+      const res = await axios.post(`${USER_API_END_POINT}/acceptConnection`, {senderID}, {
+        headers: {Authorization: `Bearer ${token}`},
+      })
+      
+    }catch(err) {
+      console.error('Error accepting connection request:', err.message);
+      alert('Failed to accept connection request. Please try again.');
+    }
+  }
   return (
     <div className="flex flex-col min-h-screen bg-neutral-100 dark:bg-neutral-900 transition-all duration-300 font-sans">
       {/* Mobile Header */}
@@ -545,16 +567,42 @@ export default function Users1() {
                         {
                         notifications.map((notification, index) => (
                       <li key={index} className="mb-3">
-                        <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg shadow-md mb-4">
-                        <h3 className="text-md  text-text-primary dark:text-text-primaryDark">{notification.text}</h3>
-                        {
-                          notification.status === 'unread' && (
-                            <button onClick={() => markAsRead(notification._id)}>
-                          Mark as Read
-                        </button>
-                          )
-                        }
-                      </div>
+                        { notification.Type === "ConnectionRequest" ? (
+  <div className="p-4 bg-blue-50 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-400 rounded-lg shadow-md mb-4">
+    <h3 className="text-md font-semibold text-blue-800 dark:text-blue-200 mb-2">
+      🤝 Connection Request
+    </h3>
+    <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">{notification.text}</p>
+    {/* {console.log(notification.
+senderId)} */}
+    <div className="flex gap-2">
+      <button
+        onClick={() => acceptRequest(notification.senderId, notification._id)} 
+        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+      >
+        Accept
+      </button>
+      <button
+        //onClick={() => rejectRequest(notification.senderID)} // Define this too
+        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+      >
+        Reject
+      </button>
+    </div>
+  </div>
+) : (
+  <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg shadow-md mb-4">
+    <h3 className="text-md text-text-primary dark:text-text-primaryDark">{notification.text}</h3>
+    {
+      notification.status === 'unread' && (
+        <button onClick={() => markAsRead(notification._id)} className="mt-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+          Mark as Read
+        </button>
+      )
+    }
+  </div>
+)}
+
                       </li>
                     )
                   )
@@ -591,22 +639,24 @@ export default function Users1() {
           ) : (
             <div className="space-y-3">
               {filteredConnections.map((connectOne, i) => (
+                
                 <Link
                   key={i}
-                  to={`connection/${connectOne._id}`}
+                  to={`connection/${connectOne.user._id}`}
                   role="link"
-                  aria-label={`Chat with ${connectOne.name}`}
+                  aria-label={`Chat with ${connectOne.user.name}`}
                 >
+                  
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     className="flex items-center gap-4 p-3 backdrop-blur-lg hover:bg-neutral-200/50 dark:hover:bg-neutral-700/50 transition-all shadow-sm"
                   >
                     <img
                       src={defaultImg}
-                      alt={connectOne.name}
+                      alt={connectOne.user.name}
                       className="w-12 h-12 rounded-full border-2 border-neutral-300 dark:border-neutral-700"
                     />
-                    <h2 className="text-base font-medium text-text-primary dark:text-text-primaryDark">{connectOne.name}</h2>
+                    <h2 className="text-base font-medium text-text-primary dark:text-text-primaryDark">{connectOne.user.name}</h2>
                   </motion.div>
                 </Link>
               ))}

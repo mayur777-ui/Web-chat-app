@@ -23,6 +23,7 @@ const getDefaultText = (type) => {
 
 export const createNotification= async(userid, notificationType, senderid=null)=>{
     const text = getDefaultText(notificationType);
+    console.log("Creating notification for user:", userid, "Type:", notificationType, "Sender ID:", senderid);
     try{
         const newNotification = new NOTIFICATION({
             receiverId: userid,
