@@ -17,7 +17,7 @@ export const loginwithgoogel = async(req,res)=>{
         const {sub,email,name} = payload;
         let user = await USER.findOne({email});
         if(!user){
-            const user = new USER({
+            user = new USER({
                   name,
                   email,
                   password: ' ',
