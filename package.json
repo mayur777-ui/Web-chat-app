@@ -6,5 +6,9 @@
     "Backend",
     "shared-huffman"
   ],
-  "packageManager": "yarn@4.9.2"
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "dev:backend": "yarn workspace Backend run dev",
+    "dev:frontend": "yarn workspace Frontend run dev"
+  }
 }
