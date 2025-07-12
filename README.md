@@ -1,83 +1,120 @@
-# Chat Web App
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat Web App - README</title>
+</head>
+<body>
+  <h1>⚡ Chat Web App — Optimized with Huffman Compression</h1>
 
-This is a real-time chat application with user authentication. It allows users to register, log in, and chat in real time.
+  <p>A real-time chat application that supports user authentication and leverages <strong>Huffman Coding</strong> for efficient, low-bandwidth message transmission. Architected with <strong>Yarn Workspaces</strong> to maintain a modular and scalable monorepo.</p>
 
----
+  <hr />
 
-## Features
+  <h2>📁 Project Structure</h2>
+  <pre>
+Chat-Web-App/
+├── Backend/            # Node.js + Express backend
+├── Frontend/           # React frontend
+├── shared-huffman/     # Shared Huffman utilities (local package)
+├── .yarn/              # Yarn modern workspace directory
+├── package.json        # Root workspace config
+├── yarn.lock
+└── .yarnrc.yml
+  </pre>
 
-- User authentication (Register & Login)
-- Real-time messaging
-- Responsive design
-- Live chat functionality with WebSocket integration
+  <hr />
 
----
+  <h2>🚀 Features</h2>
+  <ul>
+    <li>🔐 Secure user authentication (JWT-based)</li>
+    <li>💬 Real-time messaging (Socket.IO)</li>
+    <li>⚡ Huffman message compression</li>
+    <li>📦 Monorepo with Yarn Workspaces</li>
+    <li>♻️ Shared encoding/decoding logic across frontend/backend</li>
+    <li>🌐 Responsive and modern React UI</li>
+  </ul>
 
-## Installation
+  <hr />
 
-To run the chat web app locally, follow the steps below:
+  <h2>🛠️ Technologies Used</h2>
+  <ul>
+    <li><strong>Frontend:</strong> React.js, Tailwind CSS, Axios</li>
+    <li><strong>Backend:</strong> Node.js, Express, MongoDB, Mongoose</li>
+    <li><strong>Realtime Communication:</strong> Socket.IO</li>
+    <li><strong>Compression:</strong> Custom Huffman encoder/decoder</li>
+    <li><strong>Package Management:</strong> Yarn Workspaces</li>
+  </ul>
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/mayur777-ui/Web-chat-app
-    ```
+  <hr />
 
-2. Navigate into the project directory:
-    ```bash
-    cd Web-chat-app
-    ```
+  <h2>🧑‍💻 Getting Started</h2>
 
-3. Install the required dependencies:
-    ```bash
-    npm install
-    ```
+  <h3>1. Clone the repository</h3>
+  <pre><code>git clone https://github.com/mayur777-ui/Web-chat-app.git
+cd Web-chat-app</code></pre>
 
-4. Set up the environment variables (e.g., database URI, secret keys) as per your environment. Create a `.env` file for this.
+  <h3>2. Install all workspace dependencies</h3>
+  <pre><code>yarn install</code></pre>
 
-5. Run the application:
-    ```bash
-    npm start
-    ```
+  <h3>3. Set up environment variables</h3>
+  <p>Create a <code>.env</code> file inside the <code>Backend/</code> directory:</p>
+  <pre><code>PORT=8000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key</code></pre>
 
-6. Open your browser and navigate to `http://localhost:3000` to use the app.
+  <hr />
 
----
+  <h2>📦 Running the App</h2>
 
-## Usage
+  <h3>Start the backend server</h3>
+  <pre><code>yarn workspace Backend run dev</code></pre>
 
-After starting the app, you will be able to:
+  <h3>Start the frontend</h3>
+  <pre><code>yarn workspace Frontend run dev</code></pre>
 
-- Register a new user with a username and password.
-- Log in with your credentials.
-- Start chatting in real time with other logged-in users.
+  <p>Then open: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
 
----
+  <hr />
 
-## Technologies Used
+  <h2>🧠 About Huffman Compression</h2>
+  <p>Messages are encoded before storing/sending and decoded on the client:</p>
+  <ul>
+    <li><strong>Backend:</strong>
+      <ul>
+        <li>Builds a frequency map of message content</li>
+        <li>Generates a Huffman tree</li>
+        <li>Encodes the content</li>
+        <li>Stores only the encoded string and tree (in-memory or temporarily)</li>
+      </ul>
+    </li>
+    <li><strong>Frontend:</strong>
+      <ul>
+        <li>Receives encoded message and Huffman tree</li>
+        <li>Decodes message before display using <code>shared-huffman</code> utility</li>
+      </ul>
+    </li>
+  </ul>
 
-- **Frontend:** React.js, HTML, CSS
-- **Backend:** Node.js, Express
-- **Real-time communication:** Socket.io
-- **Database:** MongoDB
+  <hr />
 
----
+  <h2>🧩 Contributing</h2>
+  <ol>
+    <li>Fork the repository</li>
+    <li>Create a new feature branch:
+      <pre><code>git checkout -b feature/my-awesome-feature</code></pre>
+    </li>
+    <li>Commit your changes and push</li>
+    <li>Open a Pull Request</li>
+  </ol>
 
-## Contributing
+  <hr />
 
-If you want to contribute to this project, follow these steps:
+  <h2>📄 License</h2>
+  <p>This project is licensed under the <strong>MIT License</strong>. See the <a href="LICENSE">LICENSE</a> file for details.</p>
 
-1. Fork the repository.
-2. Clone your fork locally.
-3. Create a new branch for your changes.
-4. Commit your changes and push to your forked repository.
-5. Open a pull request.
+  <hr />
 
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Made with ❤️ by Mayur
+  <p>🚀 Built with ❤️ and Huffman logic by <a href="https://github.com/mayur777-ui" target="_blank">Mayur</a></p>
+</body>
+</html>
