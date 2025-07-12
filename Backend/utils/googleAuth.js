@@ -27,7 +27,7 @@ export const loginwithgoogel = async(req,res)=>{
         const jwtToken = jwt.sign({
             id: user.id,
         },process.env.JWT_SECRET,{expiresIn: '1h'});
-        console.log('JWT token generated:', jwtToken); 
+        // console.log('JWT token generated:', jwtToken); 
          res.json({ token: jwtToken,id: user.id });
     }catch(err){
         console.error('Error verifying Google token:', err.message);
