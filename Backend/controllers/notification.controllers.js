@@ -23,7 +23,7 @@ const getDefaultText = (type) => {
 
 export const createNotification= async(userid, notificationType, senderid=null)=>{
     const text = getDefaultText(notificationType);
-    console.log("Creating notification for user:", userid, "Type:", notificationType, "Sender ID:", senderid);
+    // console.log("Creating notification for user:", userid, "Type:", notificationType, "Sender ID:", senderid);
     try{
         const newNotification = new NOTIFICATION({
             receiverId: userid,
@@ -72,7 +72,7 @@ export const getUnreadNotificationsCount = async(req,res)=>{
 export const markNotificationAsRead = async(req,res)=>{
   const userid = req.user.id;
   const {notificatoinid} = req.params;
-  console.log("Notification ID: ", notificatoinid);
+  // console.log("Notification ID: ", notificatoinid);
   try{
     const notification = await NOTIFICATION.findOneAndUpdate({
       _id: notificatoinid,

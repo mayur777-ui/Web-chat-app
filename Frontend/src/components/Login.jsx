@@ -8,7 +8,7 @@ import { GoogleLogin } from '@react-oauth/google';
 export default function Login() {
   const USER_API_END_POINT = 'http://localhost:5000/user';
   const [input, setInput] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState({ email: '', password: '', both: '' });
+  const [errors, setErrors] = useState({ email: '', password: '', google: '',both: '' });
   const [showAlert, setShowAlert] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -24,15 +24,15 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const errorToSet = { email: '', password: '', both: '' };
+    const errorToSet = { email: '', password: '', google: '',both: '' };
 
     if (!input.email) {
       errorToSet.email = 'Email is required!';
-      errorToSet.both = 'Email is required!';
+      // errorToSet.both = 'Email is required!';
     }
     if (!input.password) {
       errorToSet.password = 'Password is required!';
-      errorToSet.both = 'Password is required!';
+      // errorToSet.both = 'Password is required!';
     }
     if (!input.email && !input.password) {
       errorToSet.both = 'Please fill all required fields!';
@@ -56,11 +56,11 @@ export default function Login() {
       navigate(`/Home/${id}`, { replace: true });
     } catch (e) {
       if (e.response?.status === 404) {
-        setErrors({ ...errors, both: 'User does not exist!' });
+        setErrors({ ...errors, both: 'User does not exist!', email: '', password: '' });
       } else if (e.response?.status === 400) {
-        setErrors({ ...errors, both: 'Invalid credentials' });
+        setErrors({ ...errors, both: 'Invalid credentials', email: '', password: '' });
       } else {
-        setErrors({ ...errors, both: 'Internal server error' });
+        setErrors({ ...errors, both: 'Internal server error', email: '', password: '' });
       }
       setShowAlert(true); // Show alert for server errors
     }
@@ -103,7 +103,11 @@ export default function Login() {
       setErrors((prevErrors) => ({
         ...prevErrors,
         google: 'Google login failed. Please try again.',
+        email: '',
+        password: '',
+        both: ''
       }));
+      setShowAlert(true);
     }
   }
 
@@ -270,9 +274,9 @@ export default function Login() {
   <div className="w-[200px] rounded-xl border overflow-hidden">
   <GoogleLogin
     onSuccess={handleGoogleLogin}
-    onError={() =>
-      setErrors({ google: 'Google login failed. Please try again.' })
-    }
+    // onError={() =>
+    //   setErrors({ google: 'Google login failed. Please try again.' })
+    // }
   />
 </div>
 </div>
@@ -315,6 +319,7 @@ export default function Login() {
             {errors.both && <p id="both-error" className="text-red-400">{errors.both}</p>}
             {errors.email && <p id="email-error" className="text-red-400">{errors.email}</p>}
             {errors.password && <p id="password-error" className="text-red-400">{errors.password}</p>}
+            {errors.google && <p id="google-error" className="text-red-400">{errors.google}</p>}
           </div>
         </motion.div>
       )}

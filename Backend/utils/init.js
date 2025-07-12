@@ -1,5 +1,5 @@
 import mongoose, { connect } from "mongoose";
-
+import MESSAGE from "../models/message.model.js";
 let connectdb = async()=>{
     try{
         await mongoose.connect(process.env.Mongo_URI);
@@ -8,5 +8,4 @@ let connectdb = async()=>{
         console.log(err);
     }
 }
-
 export default connectdb;

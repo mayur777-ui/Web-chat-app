@@ -16,6 +16,10 @@ const messageSchema = new Schema({
         type:String,
         required:true,
     },
+    huffmanTree: {
+    type: Schema.Types.Mixed, 
+    required: true,
+  },
     date:{
         type:String,
         required:true,

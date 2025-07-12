@@ -127,7 +127,7 @@ export default function Landing() {
       </main>
 
       {/* Features Section */}
-      <section className={`py-24 ${isDarkMode ? 'bg-neutral-800' : 'bg-neutral-100'}`}>
+      <section className={`py-24 ${isDarkMode ? 'bg-neutral-900' : 'bg-neutral-100'}`}>
         <div className="max-w-7xl mx-auto px-6">
           <motion.h3 
             className="text-3xl font-bold text-center mb-16"

@@ -1,0 +1,10 @@
+{
+  "name": "chat-root",
+  "private": true,
+  "workspaces": [
+    "Frontend",
+    "Backend",
+    "shared-huffman"
+  ],
+  "packageManager": "yarn@4.9.2"
+}

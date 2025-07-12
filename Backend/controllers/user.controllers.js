@@ -9,7 +9,7 @@ export const register = async (req, res) => {
   // console.log(req.body);
   try {
     if (!name || !email || !password) {
-      console.log("Please fill all the fields");
+      // console.log("Please fill all the fields");
       return res.status(400).json({ msg: "Please fill all the fields" });
     }
     let existing = await USER.findOne({ email });
@@ -92,7 +92,7 @@ export const getUser = async (req, res) => {
     const user = await USER.findById(id).populate('connections.user');
     // console.log("User ID:", user);
     const onlyAcceptedConnections = user.connections.filter((connection) => connection.status === 'accepted');
-    console.log("accept only ", onlyAcceptedConnections);
+    // console.log("accept only ", onlyAcceptedConnections);
     if (!user) {
       return res.status(404).json({
         msg: "User not found",
@@ -123,9 +123,9 @@ export const beingConnect = async (req, res) => {
       });
     }
     const connectionGetid = RecevierUser._id;
-    SendUser.connections.forEach((conn, index) => {
-  console.log(`Connection[${index}]:`, conn);
-});
+//     SendUser.connections.forEach((conn, index) => {
+//   console.log(`Connection[${index}]:`, conn);
+// });
     let u = SendUser.connections.some(connection => connection.user.toString() === connectionGetid.toString());
     if(u){
       
@@ -168,8 +168,8 @@ export const acceptConnection = async(req,res)=>{
     const receiverID = req.user.id;
     const senderUser = await USER.findById(senderID);
     const receiverUser = await USER.findById(receiverID);
-    console.log(senderUser);
-    console.log(receiverUser)
+    // console.log(senderUser);
+    // console.log(receiverUser)
     if(!senderUser){
       return res.status(404).json({
         message: "Sender User does not exist",

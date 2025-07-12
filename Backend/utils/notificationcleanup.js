@@ -11,7 +11,7 @@ const cleanOldReadNotifications = async () => {
       status: 'read',
     });
 
-    console.log(`[CRON] Cleaned ${result.deletedCount} read notifications older than 24h`);
+    // console.log(`[CRON] Cleaned ${result.deletedCount} read notifications older than 24h`);
   } catch (err) {
     console.error('[CRON ERROR]:', err.message);
   }
