@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Chat Web App - README</title>
-</head>
 <body>
   <h1>⚡ Chat Web App — Optimized with Huffman Compression</h1>
 
