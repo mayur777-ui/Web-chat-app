@@ -9,8 +9,8 @@ import { motion } from 'framer-motion';
 
 
 export default function Users1() {
-  const USER_API_END_POINT = 'http://localhost:5000/user';
-  const Notification_API_END_POINT = 'http://localhost:5000/notification';
+  const USER_API_END_POINT = 'https://webchat-backend-658o.onrender.com/user';
+  const Notification_API_END_POINT = 'https://webchat-backend-658o.onrender.com/notification';
   const token = localStorage.getItem('token');
   const [loggedInUser, setLoggedInUser] = useState({});
   const [connectionList, setConnectionList] = useState([]);
