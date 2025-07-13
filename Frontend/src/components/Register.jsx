@@ -6,7 +6,7 @@ import { useTheme } from '../hooks/ThemHook';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
 export default function Register() {
-  const USER_API_END_POINT = 'http://localhost:5000/user';
+  const USER_API_END_POINT = 'https://webchat-backend-658o.onrender.com/user';
   const [input, setInput] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({
     nameError: '',
