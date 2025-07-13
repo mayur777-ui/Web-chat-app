@@ -17,7 +17,7 @@ services:
         value: YOUR_SECRET
       - key: GOOGLE_CLIENT_ID
         value: YOUR_GOOGLE_ID
-        key: GOOGLE_EMAIL
+      - key: GOOGLE_EMAIL
         value: YOUR_GOOGLE_EMAIL
       - key: GOOGLE_EMAIL_PASS
         value: YOUR_GOOGLE_EMAIL_PASSWORD
