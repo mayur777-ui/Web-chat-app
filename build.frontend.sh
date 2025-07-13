@@ -8,5 +8,4 @@ corepack enable
 corepack prepare yarn@4.9.2 --activate
 
 yarn install --immutable
-
-yarn workspace app build
+yarn workspace Frontend build
