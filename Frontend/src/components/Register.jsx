@@ -24,7 +24,7 @@ export default function Register() {
   const handleGoogleLogin = async (response) => {
     try{
       let googleToken = response.credential;
-      console.log('Google token received:', googleToken); 
+      // console.log('Google token received:', googleToken); 
       const res = await axios.post(`${USER_API_END_POINT}/googellogin`, {token:googleToken});
       // console.log('Google login response:', res.data);
        const token = res.data.token;
