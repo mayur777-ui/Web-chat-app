@@ -11,7 +11,7 @@ import  './utils/notificationcleanup.js';
 dotenv.config();
 const Port = process.env.PORT || 3000;
 let corsOptions = {
-    origin: "http://localhost:5173",
+    origin: "https://web-chat-app-tfwd.onrender.com",
     credentials: true,
 }
 
