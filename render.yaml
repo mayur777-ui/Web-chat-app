@@ -29,7 +29,7 @@ services:
     env: static
     buildCommand: yarn workspace Frontend run build
     staticPublishPath: Frontend/dist
-    plan: free
     branch: main
     repo: https://github.com/mayur777-ui/Web-chat-app
     rootDir: .
+    envVars:
