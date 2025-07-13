@@ -27,7 +27,7 @@ services:
   - type: web
     name: chat-frontend
     env: static
-    buildCommand: yarn workspace Frontend run build
+    buildCommand: ./.renderbuild.frontend.sh
     staticPublishPath: Frontend/dist
     branch: main
     repo: https://github.com/mayur777-ui/Web-chat-app
