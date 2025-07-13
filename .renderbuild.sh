@@ -23,8 +23,8 @@ yarn workspace shared-huffman build || echo "shared-huffman has no build step"
 echo "🔨 Building Backend..."
 yarn workspace Backend build || { echo "Backend build failed"; exit 1; }
 
-# Build frontend
-echo "🎨 Building Frontend..."
-yarn workspace Frontend build || { echo "Frontend build failed"; exit 1; }
+# # Build frontend
+# echo "🎨 Building Frontend..."
+# yarn workspace Frontend build || { echo "Frontend build failed"; exit 1; }
 
 echo "✅ Render custom build script completed."
