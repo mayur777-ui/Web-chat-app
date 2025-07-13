@@ -11,7 +11,7 @@ services:
     envVars:
       - key: PORT
         value: 5000
-      - key: MONGO_URL
+      - key: MONGO_URI
         value: YOUR_MONGO_URL
       - key: JWT_SECRET
         value: YOUR_SECRET
@@ -24,11 +24,11 @@ services:
       - key: MONGO_PASSWORD
         value: YOUR_MONGO_PASSWORD
 
-  - type: web
+  - type: static
     name: chat-frontend
-    env: static
-    buildCommand: echo "✔️  Skipping: already built in root build step"
+    buildCommand: echo "Skipping: already built in root build step"
     staticPublishPath: Frontend/dist
     branch: main
     repo: https://github.com/mayur777-ui/Web-chat-app
     rootDir: .
+
