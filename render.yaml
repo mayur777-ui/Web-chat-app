@@ -17,5 +17,9 @@ services:
         value: YOUR_SECRET
       - key: GOOGLE_CLIENT_ID
         value: YOUR_GOOGLE_ID
-      - key: OPENROUTER_API_KEY
-        value: YOUR_OPENROUTER_KEY
+        key: GOOGLE_EMAIL
+        value: YOUR_GOOGLE_EMAIL
+      - key: GOOGLE_EMAIL_PASS
+        value: YOUR_GOOGLE_EMAIL_PASSWORD
+      - key: MONGO_PASSWORD
+        value: YOUR_MONGO_PASSWORD
