@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: chat-backend
+    env: node
+    buildCommand: ./renderbuild.sh
+    startCommand: yarn workspace Backend start
+    plan: free
+    branch: main
+    repo: https://github.com/mayur777-ui/Web-chat-app
+    rootDir: /
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGO_URL
+        value: YOUR_MONGO_URL
+      - key: JWT_SECRET
+        value: YOUR_SECRET
+      - key: GOOGLE_CLIENT_ID
+        value: YOUR_GOOGLE_ID
+      - key: OPENROUTER_API_KEY
+        value: YOUR_OPENROUTER_KEY
