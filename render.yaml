@@ -32,4 +32,3 @@ services:
     branch: main
     repo: https://github.com/mayur777-ui/Web-chat-app
     rootDir: .
-    envVars:
