@@ -91,7 +91,7 @@ export default function Login() {
     try{
       let googleToken = response.credential;
       console.log('Google token received:', googleToken); 
-      const res = await axios.post('http://localhost:5000/user/googellogin', {token:googleToken});
+      const res = await axios.post('https://chat-backend-coa1.onrender.com/user/googellogin', {token:googleToken});
       // console.log('Google login response:', res.data);
        const token = res.data.token;
        localStorage.setItem('token', token);
