@@ -11,12 +11,16 @@ corepack prepare yarn@4.9.2 --activate
 echo "📦 Installing dependencies using Yarn 4..."
 yarn install --immutable
 
-# Build shared workspace (only if it has a build step)
+# Build shared workspace (optional step)
 echo "🔨 Building shared-huffman (optional)..."
 yarn workspace shared-huffman build || echo "shared-huffman has no build step"
 
-# Build backend (if needed — just a placeholder here)
+# Build backend (if needed)
 echo "🔨 Building Backend..."
 yarn workspace Backend build
+
+# ✅ NEW: Build frontend
+echo "🎨 Building Frontend..."
+yarn workspace Frontend build
 
 echo "✅ Render custom build script completed."
