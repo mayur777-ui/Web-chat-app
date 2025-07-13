@@ -2,25 +2,29 @@
 
 echo "🛠️ Starting custom Render build script..."
 
-# Enable Corepack and activate the correct Yarn version
+# Ensure Corepack is enabled and Yarn 4.9.2 is activated
 echo "🔧 Enabling Corepack and preparing Yarn 4.9.2..."
-corepack enable
-corepack prepare yarn@4.9.2 --activate
+corepack enable || { echo "Failed to enable Corepack"; exit 1; }
+corepack prepare yarn@4.9.2 --activate || { echo "Failed to activate Yarn 4.9.2"; exit 1; }
+
+# Verify Yarn version
+echo "🔍 Verifying Yarn version..."
+yarn --version || { echo "Yarn version check failed"; exit 1; }
 
 # Install all workspace dependencies
 echo "📦 Installing dependencies using Yarn 4..."
-yarn install --immutable
+yarn install --immutable || { echo "Yarn install failed"; exit 1; }
 
-# Build shared workspace (optional step)
+# Build shared workspace (if needed)
 echo "🔨 Building shared-huffman (optional)..."
 yarn workspace shared-huffman build || echo "shared-huffman has no build step"
 
-# Build backend (if needed)
+# Build backend
 echo "🔨 Building Backend..."
-yarn workspace Backend build
+yarn workspace Backend build || { echo "Backend build failed"; exit 1; }
 
-# ✅ NEW: Build frontend
+# Build frontend
 echo "🎨 Building Frontend..."
-yarn workspace Frontend build
+yarn workspace Frontend build || { echo "Frontend build failed"; exit 1; }
 
 echo "✅ Render custom build script completed."

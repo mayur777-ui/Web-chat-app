@@ -9,27 +9,29 @@ services:
     rootDir: .
     plan: free
     envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
       - key: PORT
         value: 5000
       - key: MONGO_URI
-        value: YOUR_MONGO_URL
+        sync: false
       - key: JWT_SECRET
-        value: YOUR_SECRET
+        sync: false
       - key: GOOGLE_CLIENT_ID
-        value: YOUR_GOOGLE_ID
+        sync: false
       - key: GOOGLE_EMAIL
-        value: YOUR_GOOGLE_EMAIL
+        sync: false
       - key: GOOGLE_EMAIL_PASS
-        value: YOUR_GOOGLE_EMAIL_PASSWORD
+        sync: false
       - key: MONGO_PASSWORD
-        value: YOUR_MONGO_PASSWORD
+        sync: false
 
   - type: web
     name: chat-frontend
-    env: node
-    buildCommand: echo "Skipping already built in root build step"
-    startCommand: serve -s Frontend/dist
+    env: static
+    buildCommand: ./.renderbuild.sh
+    staticPublishPath: Frontend/dist
     branch: main
     repo: https://github.com/mayur777-ui/Web-chat-app
     rootDir: .
-
+    plan: free
