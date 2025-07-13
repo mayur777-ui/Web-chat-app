@@ -2,7 +2,7 @@ services:
   - type: web
     name: chat-backend
     env: node
-    buildCommand: ./renderbuild.sh
+    buildCommand: ./.renderbuild.sh
     startCommand: yarn workspace Backend start
     plan: free
     branch: main
