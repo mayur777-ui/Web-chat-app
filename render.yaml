@@ -26,9 +26,9 @@ services:
 
   - type: web
     name: chat-frontend
-    env: static
+    env: node
     buildCommand: echo "Skipping already built in root build step"
-    staticPublishPath: Frontend/dist
+    startCommand: serve -s Frontend/dist
     branch: main
     repo: https://github.com/mayur777-ui/Web-chat-app
     rootDir: .

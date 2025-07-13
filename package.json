@@ -10,5 +10,8 @@
   "scripts": {
     "dev:backend": "yarn workspace Backend run dev",
     "dev:frontend": "yarn workspace Frontend run dev"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
   }
 }
