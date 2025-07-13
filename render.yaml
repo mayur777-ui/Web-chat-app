@@ -23,3 +23,16 @@ services:
         value: YOUR_GOOGLE_EMAIL_PASSWORD
       - key: MONGO_PASSWORD
         value: YOUR_MONGO_PASSWORD
+
+  - type: web
+    name: chat-frontend
+    env: static
+    buildCommand: yarn workspace Frontend run build
+    staticPublishPath: Frontend/dist
+    plan: free
+    branch: main
+    repo: https://github.com/mayur777-ui/Web-chat-app
+    rootDir: .
+    envVars:
+      - key: VITE_API_URL
+        value: https://chat-backend.onrender.com
