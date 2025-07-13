@@ -26,6 +26,7 @@ services:
 
   - type: web
     name: chat-frontend
+    env: static
     buildCommand: echo "Skipping already built in root build step"
     staticPublishPath: Frontend/dist
     branch: main
