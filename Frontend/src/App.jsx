@@ -10,7 +10,7 @@ import Landing from './components/Landing';
 import ChatBox from './components/ChatBox';
 import EmptyChat from './components/EmptyChat';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import OTP from './components/OTP.JSX';
+import OTP from './components/OTP.jsx';
 import ResetPassword from './components/ResetPassword';
 
 const clientID = "364301647683-pjarv54flf93in9c7hd25e4qlqugd982.apps.googleusercontent.com";
