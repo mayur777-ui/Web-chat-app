@@ -25,7 +25,7 @@
     "mongoose": "^8.9.2",
     "node-cron": "^4.1.0",
     "nodemailer": "^7.0.3",
-    "shared-huffman": "workspace:*",
+    "shared-huffman": "^1.0.2",
     "socket.io": "^4.8.1"
   },
   "optionalDependencies": {
