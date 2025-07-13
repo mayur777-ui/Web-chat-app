@@ -24,7 +24,7 @@ services:
       - key: MONGO_PASSWORD
         value: YOUR_MONGO_PASSWORD
 
-  - type: static
+  - type: web
     name: chat-frontend
     buildCommand: echo "Skipping already built in root build step"
     staticPublishPath: Frontend/dist
