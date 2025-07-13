@@ -29,7 +29,11 @@ let Routeapp = createBrowserRouter([
   },
   {
     path:'/register',
-    element: <Register />
+    element:(
+       <GoogleOAuthProvider clientId={clientID}>
+        <Register />
+        </GoogleOAuthProvider>
+    )
   },
   {
     path:'Home/:id', //=> till now id is user id who is logged in
