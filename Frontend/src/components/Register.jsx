@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTheme } from '../hooks/ThemHook';
 import { FaMoon, FaSun } from 'react-icons/fa';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Register() {
   const USER_API_END_POINT = 'https://webchat-backend-658o.onrender.com/user';
@@ -20,6 +21,28 @@ export default function Register() {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
+  const handleGoogleLogin = async (response) => {
+    try{
+      let googleToken = response.credential;
+      console.log('Google token received:', googleToken); 
+      const res = await axios.post('http://localhost:5000/user/googellogin', {token:googleToken});
+      // console.log('Google login response:', res.data);
+       const token = res.data.token;
+       localStorage.setItem('token', token);
+       let id = res.data.id;
+       navigate(`/Home/${id}`, { replace: true });
+    }catch (error) {
+      console.log("Google login error:", error.message);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        nameError:'',
+        emailError: '',
+        passwordError: '',
+        allError: error.response?.data?.message || 'Google login failed. Please try again.',
+      }));
+      setShowAlert(true);
+    }
+  }
   const handleInput = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
@@ -235,6 +258,21 @@ export default function Register() {
           >
             Sign Up
           </motion.button>
+          <div className="flex items-center w-full gap-2 text-sm text-gray-400">
+        <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
+        <span>or</span>
+        <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
+      </div>
+
+  <div className="w-[200px] m-auto rounded-xl border overflow-hidden">
+  <GoogleLogin
+    onSuccess={handleGoogleLogin}
+    
+    // onError={() =>
+    //   setErrors({ google: 'Google login failed. Please try again.' })
+    // }
+  />
+</div>
         </form>
         <p
           className={`mt-6 text-sm font-sans ${
