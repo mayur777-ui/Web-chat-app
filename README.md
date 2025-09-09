@@ -1,114 +1,141 @@
-<body>
-  <h1>⚡ Chat Web App — Optimized with Huffman Compression</h1>
+# 💬 Web Chat App
 
-  <p>A real-time chat application that supports user authentication and leverages <strong>Huffman Coding</strong> for efficient, low-bandwidth message transmission. Architected with <strong>Yarn Workspaces</strong> to maintain a modular and scalable monorepo.</p>
+[![Live Demo](https://img.shields.io/badge/Live-Demo-green?style=flat-square)](https://web-chat-app-tfwd.onrender.com/)
+[![GitHub stars](https://img.shields.io/github/stars/mayur777-ui/Web-chat-app?style=social)](https://github.com/mayur777-ui/Web-chat-app/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/mayur777-ui/Web-chat-app?style=flat-square)](https://github.com/mayur777-ui/Web-chat-app/commits/main)
+[![Issues](https://img.shields.io/github/issues/mayur777-ui/Web-chat-app?style=flat-square)](https://github.com/mayur777-ui/Web-chat-app/issues)
 
-  <hr />
+A modern, full-stack **MERN Chat Application** for seamless, real-time conversations.  
+_Instant messaging, secure authentication, robust profiles, and a beautiful, responsive UI—all in one app._
 
-  <h2>📁 Project Structure</h2>
-  <pre>
-Chat-Web-App/
-├── Backend/            # Node.js + Express backend
-├── Frontend/           # React frontend
-├── shared-huffman/     # Shared Huffman utilities (local package)
-├── .yarn/              # Yarn modern workspace directory
-├── package.json        # Root workspace config
-├── yarn.lock
-└── .yarnrc.yml
-  </pre>
+---
 
-  <hr />
+## ✨ Features
 
-  <h2>🚀 Features</h2>
-  <ul>
-    <li>🔐 Secure user authentication (JWT-based)</li>
-    <li>💬 Real-time messaging (Socket.IO)</li>
-    <li>⚡ Huffman message compression</li>
-    <li>📦 Monorepo with Yarn Workspaces</li>
-    <li>♻️ Shared encoding/decoding logic across frontend/backend</li>
-    <li>🌐 Responsive and modern React UI</li>
-  </ul>
+- **Real-Time Messaging** — Lightning-fast chat using Socket.IO
+- **Secure Authentication** — Protected routes with JWT, password hashing
+- **User Profiles** — Avatars, editable info, personalized experience
+- **Conversation History** — Persistent chats (MongoDB)
+- **Responsive UI** — Mobile-friendly and accessible
+- **Modern Tech Stack** — React, Node.js, Express, MongoDB
 
-  <hr />
+---
 
-  <h2>🛠️ Technologies Used</h2>
-  <ul>
-    <li><strong>Frontend:</strong> React.js, Tailwind CSS, Axios</li>
-    <li><strong>Backend:</strong> Node.js, Express, MongoDB, Mongoose</li>
-    <li><strong>Realtime Communication:</strong> Socket.IO</li>
-    <li><strong>Compression:</strong> Custom Huffman encoder/decoder</li>
-    <li><strong>Package Management:</strong> Yarn Workspaces</li>
-  </ul>
+## 📸 Preview
 
-  <hr />
+> _Add your screenshots here for login, chat window, user profile, etc._  
+> ![Chat UI screenshot](#) <!-- Replace # with your image URL -->
 
-  <h2>🧑‍💻 Getting Started</h2>
+---
 
-  <h3>1. Clone the repository</h3>
-  <pre><code>git clone https://github.com/mayur777-ui/Web-chat-app.git
-cd Web-chat-app</code></pre>
+## 🚀 Quick Start
 
-  <h3>2. Install all workspace dependencies</h3>
-  <pre><code>yarn install</code></pre>
+### Prerequisites
 
-  <h3>3. Set up environment variables</h3>
-  <p>Create a <code>.env</code> file inside the <code>Backend/</code> directory:</p>
-  <pre><code>PORT=8000
+- **Node.js** (v16+)
+- **MongoDB** (local or Atlas cloud)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/mayur777-ui/Web-chat-app.git
+cd Web-chat-app
+```
+
+### 2. Configure Environment
+
+Inside `/Backend`, create a `.env` file:
+
+```
+PORT=5000
 MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key</code></pre>
+JWT_SECRET=your_jwt_secret
+```
 
-  <hr />
+### 3. Install & Run
 
-  <h2>📦 Running the App</h2>
+#### Backend
 
-  <h3>Start the backend server</h3>
-  <pre><code>yarn workspace Backend run dev</code></pre>
+```bash
+cd Backend
+npm install
+npm start
+```
 
-  <h3>Start the frontend</h3>
-  <pre><code>yarn workspace Frontend run dev</code></pre>
+#### Frontend
 
-  <p>Then open: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+```bash
+cd ../Frontend
+npm install
+npm start
+```
 
-  <hr />
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: [http://localhost:5000](http://localhost:5000) (API)
 
-  <h2>🧠 About Huffman Compression</h2>
-  <p>Messages are encoded before storing/sending and decoded on the client:</p>
-  <ul>
-    <li><strong>Backend:</strong>
-      <ul>
-        <li>Builds a frequency map of message content</li>
-        <li>Generates a Huffman tree</li>
-        <li>Encodes the content</li>
-        <li>Stores only the encoded string and tree (in-memory or temporarily)</li>
-      </ul>
-    </li>
-    <li><strong>Frontend:</strong>
-      <ul>
-        <li>Receives encoded message and Huffman tree</li>
-        <li>Decodes message before display using <code>shared-huffman</code> utility</li>
-      </ul>
-    </li>
-  </ul>
+---
 
-  <hr />
+## 🗂️ Project Structure
 
-  <h2>🧩 Contributing</h2>
-  <ol>
-    <li>Fork the repository</li>
-    <li>Create a new feature branch:
-      <pre><code>git checkout -b feature/my-awesome-feature</code></pre>
-    </li>
-    <li>Commit your changes and push</li>
-    <li>Open a Pull Request</li>
-  </ol>
+```
+Web-chat-app/
+├── Backend/    # Express API, MongoDB, Auth, Sockets
+├── Frontend/   # React App, Components, Styling
+└── README.md
+```
 
-  <hr />
+---
 
-  <h2>📄 License</h2>
-  <p>This project is licensed under the <strong>MIT License</strong>. See the <a href="LICENSE">LICENSE</a> file for details.</p>
+## ⚙️ Tech Stack
 
-  <hr />
+- **Frontend:** React, React Router, Context API, CSS
+- **Backend:** Node.js, Express, MongoDB (Mongoose), JWT, Socket.IO, bcrypt
+- **Dev Tools:** Render (deployment), dotenv, nodemon
 
-  <p>🚀 Built with ❤️ and Huffman logic by <a href="https://github.com/mayur777-ui" target="_blank">Mayur</a></p>
-</body>
-</html>
+---
+
+## 👥 Community & Contribution
+
+Contributions are welcome!  
+Whether it’s a bug, feature request, or new idea—[open an issue](https://github.com/mayur777-ui/Web-chat-app/issues) or submit a pull request!
+
+1. Fork the repo
+2. Create a branch (`git checkout -b feature/your-feature`)
+3. Commit (`git commit -m "Add feature"`)
+4. Push (`git push origin feature/your-feature`)
+5. Open a Pull Request
+
+---
+
+## 🛠️ Troubleshooting
+
+- **Frontend/Backend not connecting?**  
+  Check API endpoint URLs and ensure both servers are running.
+
+- **MongoDB connection errors?**  
+  Verify your `MONGO_URI` and database permissions.
+
+- **Socket.IO issues?**  
+  Ensure correct CORS settings and both servers are on.
+
+---
+
+## 📅 Future Implementation
+
+- [ ] Group chats
+- [ ] Typing indicators
+- [ ] Read receipts
+- [ ] File/image sharing
+---
+
+## 📜 License
+
+MIT License — see [`LICENSE`](LICENSE) for details.
+
+---
+
+## 🙋‍♂️ Author
+
+- **mayur777-ui** — [GitHub profile](https://github.com/mayur777-ui)
+
+> _If you like this project, please ⭐ star it!_
