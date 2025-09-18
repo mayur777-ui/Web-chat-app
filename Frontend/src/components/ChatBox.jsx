@@ -24,7 +24,7 @@ export default function ChatBox() {
   const typingTimeoutRef = useRef(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const USER_API_END_POINT = "http://localhost:5000/message";
+  const USER_API_END_POINT = "https://webchat-backend-658o.onrender.com/message";
   const { isDarkMode } = useTheme();
   const [playSound] = useSound("/sound.mp3", { volume: 1 });
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -39,7 +39,7 @@ export default function ChatBox() {
 
   const socketRef = useRef(null);
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io("https://webchat-backend-658o.onrender.com", {
       withCredentials: true,
       query: { userId: logUser._id },
       auth: { token },
@@ -85,7 +85,7 @@ export default function ChatBox() {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/user/getDetails/${id}`,
+          `https://webchat-backend-658o.onrender.com/user/getDetails/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -102,7 +102,7 @@ export default function ChatBox() {
     const chatUserInfo = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/user/getDetails/${connectionId}`,
+          `https://webchat-backend-658o.onrender.com/user/getDetails/${connectionId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
