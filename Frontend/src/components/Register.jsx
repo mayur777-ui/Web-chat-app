@@ -8,7 +8,7 @@ import { GoogleLogin } from '@react-oauth/google';
 
 
 export default function Register() {
-  const USER_API_END_POINT = 'http://localhost:5000/user';
+  const USER_API_END_POINT = 'https://webchat-backend-658o.onrender.com/user';
   const [input, setInput] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({
     nameError: '',
@@ -33,7 +33,7 @@ export default function Register() {
     try{
       let googleToken = response.credential;
       console.log('Google token received:', googleToken); 
-      const res = await axios.post('http://localhost:5000/user/googellogin', {token:googleToken});
+      const res = await axios.post(`${USER_API_END_POINT}/googellogin`, {token:googleToken});
       // console.log('Google login response:', res.data);
        const token = res.data.token;
        localStorage.setItem('token', token);
