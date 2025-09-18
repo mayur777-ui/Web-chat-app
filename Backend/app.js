@@ -6,7 +6,7 @@ import messageRoute from './route/message.route.js';
 import cors from 'cors';
 import { app,server,io } from './utils/socket.js';
 import notificationRoute from './route/notification.route.js';
-import  './utils/notificationcleanup.js';
+import './utils/notificationcleanup.js';
 // const app = express();
 dotenv.config();
 const Port = process.env.PORT || 3000;

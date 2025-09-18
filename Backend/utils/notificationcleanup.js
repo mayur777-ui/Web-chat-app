@@ -3,14 +3,15 @@ import  NOTIFICATION from '../models/notification.model.js';
 import { NOTIFICATION_TYPES } from '../utils/notification.types.js';    
 
 const cleanOldReadNotifications = async () => {
-  const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24h
+  const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000);  
 
   try {
     const result = await NOTIFICATION.deleteMany({
-      createdAt: { $lt: cutoffTime },
+      createdAt: { $lte: new Date(Date.now()) },
       status: 'read',
     });
-
+    // let notification = await NOTIFICATION.find();
+    // console.log(notification);
     // console.log(`[CRON] Cleaned ${result.deletedCount} read notifications older than 24h`);
   } catch (err) {
     console.error('[CRON ERROR]:', err.message);
