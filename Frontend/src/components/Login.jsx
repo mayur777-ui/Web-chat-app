@@ -40,7 +40,7 @@ export default function Login() {
 
     setErrors(errorToSet);
     if (errorToSet.both || errorToSet.email || errorToSet.password) {
-      setShowAlert(true); // Show alert for errors
+      setShowAlert(true);v
       return;
     }
 
@@ -62,7 +62,7 @@ export default function Login() {
       } else {
         setErrors({ ...errors, both: 'Internal server error', email: '', password: '' });
       }
-      setShowAlert(true); // Show alert for server errors
+      setShowAlert(true); 
     }
   };
 
@@ -72,14 +72,14 @@ export default function Login() {
       const timer = setTimeout(() => {
         setShowAlert(false);
       }, 2000);
-      return () => clearTimeout(timer); // Cleanup timer
+      return () => clearTimeout(timer);
     }
   }, [showAlert]);
 
   const togglePassword = () => setShowPassword(!showPassword);
 
   const handleForgotPassword = () => {
-    setShowForgotModal(true); // Show forgot password modal
+    setShowForgotModal(true); 
   };
 
   const closeForgotModal = () => {
@@ -273,9 +273,9 @@ export default function Login() {
   <div className="w-[200px] rounded-xl border overflow-hidden">
   <GoogleLogin
     onSuccess={handleGoogleLogin}
-    // onError={() =>
-    //   setErrors({ google: 'Google login failed. Please try again.' })
-    // }
+    onError={() =>
+      setErrors({ google: 'Google login failed. Please try again.' })
+    }
   />
 </div>
 </div>

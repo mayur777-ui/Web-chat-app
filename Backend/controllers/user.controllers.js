@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import { transporter } from "../utils/email.js";
 import { createNotification } from "./notification.controllers.js";
 import { NOTIFICATION_TYPES } from "../utils/notification.types.js";
+import mongoose, { connections } from "mongoose";
+import { sendOtp } from "../utils/email.js";
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   // console.log(req.body);
@@ -12,11 +14,11 @@ export const register = async (req, res) => {
       // console.log("Please fill all the fields");
       return res.status(400).json({ msg: "Please fill all the fields" });
     }
-    let existing = await USER.findOne({ email });
+    let existing = await USER.exists({email});
+    // let existing = await USER.findOne({email});
     if (existing) {
       return res.status(409).json({ msg: "User already exists" });
     }
-
     const hashedPassword = await bcrypt.hash(password, 12);
     const newUser = new USER({
       name,
@@ -42,8 +44,8 @@ export const register = async (req, res) => {
       msg: "User registered successfully",
     });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ msg: err });
-    // console.log(err.message);
   }
 };
 
@@ -55,7 +57,7 @@ export const login = async (req, res) => {
         msg: "Please fill all the fields",
       });
     }
-    let existing = await USER.findOne({ email });
+    let existing = await USER.findOne({ email }).select('password _id');
     if (!existing) {
       return res.status(404).json({
         msg: "User does not exist",
@@ -89,16 +91,78 @@ export const login = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await USER.findById(id).populate('connections.user');
-    // console.log("User ID:", user);
-    const onlyAcceptedConnections = user.connections.filter((connection) => connection.status === 'accepted');
-    // console.log("accept only ", onlyAcceptedConnections);
+    // console.log(id);
+    // const user = await USER.findById(id).populate('connections.user');
+    // const onlyAcceptedConnections = user.connections.filter((connection) => connection.status === 'accepted');
+   const user = (await USER.aggregate([
+  { $match: { _id: new mongoose.Types.ObjectId(id) } },
+
+  // Step 1: Filter connections array
+  {
+    $project: {
+      name: 1,
+      email: 1,
+      connections: {
+        $filter: {
+          input: "$connections",
+          as: "conn",
+          cond: { $eq: ["$$conn.status", "accepted"] }
+        }
+      }
+    }
+  },
+
+  // Step 2: Populate user references in connections
+  {
+    $lookup: {
+      from: "users",
+      localField: "connections.user",
+      foreignField: "_id",
+      as: "populatedUsers"
+    }
+  },
+
+  // Step 3: Map the populated users back into connections
+  {
+    $addFields: {
+      connections: {
+        $map: {
+          input: "$connections",
+          as: "conn",
+          in: {
+            $mergeObjects: [
+              "$$conn",
+              {
+                user: {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: "$populatedUsers",
+                        as: "u",
+                        cond: { $eq: ["$$u._id", "$$conn.user"] }
+                      }
+                    },
+                    0
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+
+  // Step 4: Remove the temporary populatedUsers array
+  { $project: { populatedUsers: 0 } }
+]))[0];
+    console.log(user);
     if (!user) {
       return res.status(404).json({
         msg: "User not found",
       });
     }
-    res.send({user, userFriend: onlyAcceptedConnections});
+    res.send({user});
   } catch (err) {
     res.status(500).json({ msg: err });
     console.log(err.message);
@@ -123,9 +187,7 @@ export const beingConnect = async (req, res) => {
       });
     }
     const connectionGetid = RecevierUser._id;
-//     SendUser.connections.forEach((conn, index) => {
-//   console.log(`Connection[${index}]:`, conn);
-// });
+
     let u = SendUser.connections.some(connection => connection.user.toString() === connectionGetid.toString());
     if(u){
       
@@ -214,39 +276,13 @@ export const acceptConnection = async(req,res)=>{
     });
   }
 }
-// export const getAllconnections = async (req, res) => {
-//   try {
-//     const id = req.user.id;
-//     console.log("User id:", id);
-//     const user = await USER.findById(id).populate('connections');
-//     console.log(user);
-//     if (!user) {
-//       return res.status(404).json({
-//         message: "User does not exist",
-//       });
-//     }
-//     const allConnections = user.connections;
-//     res.status(201).json({
-//       user,
-//       allConnections,
-//     });
-//     // console.log(user);
-//   } catch (error) {
-//     console.log(error.message);
-//     res.send({
-//       message: "Internal server error",
-//     });
-//   }
-// };
+
 
 
 
 export const forgotPassword = async( req, res) => {
   try{
-//     console.log("Email user:", process.env.Google_EMAIL);
-// console.log("Email pass:", process.env.Google_EMAIL_PASS);
     const {email} = req.body;
-    // console.log(email);
     if(!email){
       return res.status(400).json({
         message: "Please fill all the fields",
@@ -266,61 +302,14 @@ export const forgotPassword = async( req, res) => {
     }
     await user.save();
     // res.status(200);
-    await transporter.sendMail({
-      from: process.env.Google_email,
-      to: email,
-      subject: "Password Reset OTP",
-      html: `<div style="
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-  background: #f9fafb; 
-  padding: 20px; 
-  border-radius: 12px; 
-  max-width: 400px; 
-  margin: auto; 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  color: #333;
-">
-  <h2 style="color: #4f46e5; margin-bottom: 10px;">Password Reset OTP</h2>
-  <p style="font-size: 16px; line-height: 1.5;">
-    Your OTP for password reset is 
-    <span style="
-      display: inline-block;
-      background: #4f46e5;
-      color: white;
-      padding: 10px 18px;
-      font-weight: 700;
-      font-size: 18px;
-      border-radius: 8px;
-      letter-spacing: 2px;
-      user-select: all;
-      ">
-      ${otp}
-    </span>
-  </p>
-  <p style="font-size: 14px; color: #6b7280; margin-top: 12px;">
-    This OTP is valid for 10 minutes. Please do not share it with anyone.
-  </p>
-</div>
-`,
-    }).then(() => {
-      res.status(200).json({
-        message: "OTP sent to your email",
-      });
-    }).catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        message: "Failed to send OTP",
-      });   
-    })
+    await sendOtp(email, otp);
+    res.status(200).json({message: "otp send successfully"});
   }catch(err){
-    console.log(err);
     res.status(500).json({
       message: "Internal server error",
     });
   }
 }
-
-
 export const verifyOtp = async(req,res)=>{
   try{
     const {email, otp} = req.body;
