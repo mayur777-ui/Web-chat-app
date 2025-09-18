@@ -22,6 +22,28 @@ export default function Register() {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
 
+  const handleGoogleLogin = async (response) => {
+    try{
+      let googleToken = response.credential;
+      // console.log('Google token received:', googleToken); 
+      const res = await axios.post(`${USER_API_END_POINT}/googellogin`, {token:googleToken});
+      // console.log('Google login response:', res.data);
+       const token = res.data.token;
+       localStorage.setItem('token', token);
+       let id = res.data.id;
+       navigate(`/Home/${id}`, { replace: true });
+    }catch (error) {
+      console.log("Google login error:", error.message);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        nameError:'',
+        emailError: '',
+        passwordError: '',
+        allError: error.response?.data?.message || 'Google login failed. Please try again.',
+      }));
+      setShowAlert(true);
+    }
+  }
   const handleInput = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
