@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function OTP() {
   const navigate  = useNavigate();
   const [otp, setOtp] = useState({ otp1: '', otp2: '', otp3: '', otp4: '' });
-  const USER_API_END_POINT = 'http://localhost:5000/user';
+  const USER_API_END_POINT = 'https://webchat-backend-658o.onrender.com/user';
   const inputRefs = {
     otp1: useRef(null),
     otp2: useRef(null),
