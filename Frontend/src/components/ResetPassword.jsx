@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 export default function ResetPassword() {
-  const USER_API_END_POINT = 'http://localhost:5000/user';
+  const USER_API_END_POINT = 'https://webchat-backend-658o.onrender.com/user';
   const [form, setForm] = useState({ password: '', confirmPassword: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
